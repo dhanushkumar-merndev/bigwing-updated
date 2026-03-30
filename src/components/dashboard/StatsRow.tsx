@@ -10,7 +10,7 @@ interface StatsRowProps {
 }
 
 const statConfig = [
-  { key: "pending" as const, label: "New Applications", textColor: "text-chart-1", bgColor: "bg-chart-1/10", pillBg: "bg-chart-1/15", pillText: "text-chart-1", barColor: "bg-chart-1", icon: "M12 6v6m0 0v6m0-6h6m-6 0H6" },
+  { key: "pending" as const, label: "New", textColor: "text-chart-1", bgColor: "bg-chart-1/10", pillBg: "bg-chart-1/15", pillText: "text-chart-1", barColor: "bg-chart-1", icon: "M12 6v6m0 0v6m0-6h6m-6 0H6" },
   { key: "rejected" as const, label: "Rejected", textColor: "text-chart-1", bgColor: "bg-chart-1/10", pillBg: "bg-chart-1/15", pillText: "text-chart-1", barColor: "bg-chart-1", icon: "M6 18L18 6M6 6l12 12" },
   { key: "interested" as const, label: "Interested", textColor: "text-chart-1", bgColor: "bg-chart-1/10", pillBg: "bg-chart-1/15", pillText: "text-chart-1", barColor: "bg-chart-1", icon: "M5 13l4 4L19 7" },
   { key: "inprocess" as const, label: "In Process", textColor: "text-chart-1", bgColor: "bg-chart-1/10", pillBg: "bg-chart-1/15", pillText: "text-chart-1", barColor: "bg-chart-1", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
