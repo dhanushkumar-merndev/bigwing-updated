@@ -41,12 +41,12 @@ export default function Header({ onRefresh, isPending, lastUpdated }: HeaderProp
         <div className="flex items-center gap-[var(--dash-gap)]">
           <img
             src="/image.webp"
-            alt="Tansi Motors Logo"
+            alt="Honda BigWing Whitefield Logo"
             className="h-10 w-10 md:h-12 md:w-12 rounded-lg object-contain"
             suppressHydrationWarning
           />
           <div className="flex flex-col ml-2">
-            <h1 className="text-sm font-bold tracking-tight text-primary leading-tight md:text-lg">TANSI MOTORS</h1>
+            <h1 className="text-sm font-bold tracking-tight text-primary leading-tight mb-1">Honda BigWing Whitefield</h1>
             <p className="text-[10px] font-bold tracking-[0.1em] text-muted-foreground uppercase leading-tight md:text-[9.8px] md:tracking-[0.2em]">Hiring Dashboard</p>
           </div>
         </div>

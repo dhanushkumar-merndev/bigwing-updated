@@ -622,10 +622,12 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
       <Card className="rounded-[var(--dash-card-radius)] bg-card border-[var(--dash-border)] shadow-sm hover:shadow-md transition-all duration-[var(--dash-transition-slow)] min-h-[360px]">
         <CardHeader className="py-4 px-6 space-y-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-              <BarChart3 className="w-3 h-3" /> Role Breakdown
+            <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <BarChart3 className="w-3 h-3" /> Role Breakdown
+              </div>
               {roleData.length > 0 && (
-                <span className="ml-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[9px] font-black">
+                <span className="sm:ml-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[9px] font-black shrink-0">
                   {totalRoleApplicants} RECORDS
                 </span>
               )}

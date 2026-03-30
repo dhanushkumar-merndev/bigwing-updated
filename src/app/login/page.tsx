@@ -45,7 +45,7 @@ export default function LoginPage() {
           <div className="mx-auto mb-4 flex items-center gap-3 flex-col">
             <img
               src="/image.webp"
-              alt="Tansi Motors Logo"
+              alt="Honda BigWing Whitefield Logo"
               className="h-18 w-18 md:h-20 md:w-20 rounded-lg object-contain"
             />
             <div>
