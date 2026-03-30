@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tansimotorshiring.netlify.app"),
-  title: "Tansi Motors | Hiring Dashboard",
+  metadataBase: new URL("https://hondabigwingblr-hiring.netlify.app"),
+  title: "Honda Bigwingblr | Hiring Dashboard",
   description: "Internal hiring dashboard for managing Facebook job leads.",
   robots: {
     index: false,

@@ -49,7 +49,7 @@ export default function LoginPage() {
               className="h-18 w-18 md:h-20 md:w-20 rounded-lg object-contain"
             />
             <div>
-              <CardTitle className="text-xl font-bold text-primary/90">TANSI MOTORS</CardTitle>
+              <CardTitle className="text-xl font-bold text-primary/90"></CardTitle>
               <CardDescription className="text-xs font-medium tracking-widest text-muted-foreground">
                 HIRING DASHBOARD
               </CardDescription>

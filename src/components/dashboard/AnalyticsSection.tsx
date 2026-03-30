@@ -436,6 +436,10 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
     }));
   }, [deferredEntries, roleDateRange]);
 
+  const totalRoleApplicants = useMemo(() => {
+    return roleData.reduce((sum, item) => sum + item.pending + item.interested + item.inprocess + item.rejected, 0);
+  }, [roleData]);
+
   const workflowData = useMemo(() => {
     if (!deferredEntries.length || !workflowDateRange?.from) return [];
     const from = startOfDay(workflowDateRange.from);
@@ -620,6 +624,11 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
           <div className="flex items-center justify-between">
             <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
               <BarChart3 className="w-3 h-3" /> Role Breakdown
+              {roleData.length > 0 && (
+                <span className="ml-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[9px] font-black">
+                  {totalRoleApplicants} RECORDS
+                </span>
+              )}
             </CardTitle>
             <DatePickerWithRange date={roleDateRange} setDate={setRoleDateRange} minDate={earliestDate} />
           </div>

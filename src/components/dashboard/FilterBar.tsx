@@ -245,7 +245,7 @@ export default function FilterBar({
                     onSortFieldChange("created_time");
                     onSortOrderChange("desc");
                   }}
-                  className="text-[10px] font-bold text-primary hover:underline"
+                  className="text-[10px] font-bold text-red-500 hover:underline"
                 >
                   Reset all
                 </button>

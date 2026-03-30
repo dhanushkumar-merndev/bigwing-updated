@@ -19,7 +19,7 @@ import {
   ChevronDown,
   History
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -104,6 +104,15 @@ const statusConfig: Record<
     activeBg: "bg-white",
     icon: RefreshCw,
   },
+};
+
+/**
+ * 🛡️ safeFormat: Helper to prevent crashes if date string is invalid
+ */
+const safeFormat = (dateStr: string | undefined | null, formatStr: string, fallback = "—") => {
+  if (!dateStr) return fallback;
+  const d = new Date(dateStr);
+  return isValid(d) ? format(d, formatStr) : fallback;
 };
 
 export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, isPending, isSaving, isDesktop }: ApplicantCardProps) {
@@ -313,11 +322,11 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                     <Calendar className="w-3 h-3" />
                   </div>
                   <span className="text-[12px] font-bold text-muted-foreground truncate">
-                    Applied {applicant.created_time ? format(new Date(applicant.created_time), "dd MMM yyyy") : "—"}
+                    Applied {safeFormat(applicant.created_time, "dd MMM yyyy")}
                   </span>
                 </div>
                 <div className="h-8 px-4 flex items-center justify-center text-[11px]  font-black bg-muted text-primary shrink-0 rounded-full border border-border shadow-sm">
-                  {applicant.created_time ? format(new Date(applicant.created_time), "hh:mm a") : "--:--"}
+                  {safeFormat(applicant.created_time, "hh:mm a", "--:--")}
                 </div>
               </div>
             </div>
@@ -390,7 +399,7 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                   <div className="flex items-center gap-1 text-[11px] text-muted-foreground font-black">
                     <Clock className="w-3 h-3" />
                     {applicant.updated.length > 0
-                      ? format(new Date(applicant.updated[applicant.updated.length - 1].split("|")[0]), "dd MMM yyyy")
+                      ? safeFormat(applicant.updated[applicant.updated.length - 1].split("|")[0], "dd MMM yyyy")
                       : "New Lead"}
                   </div>
                   {applicant.updated.length > 0 && applicant.updated[applicant.updated.length - 1].includes("|") && (
@@ -425,7 +434,7 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                             <div className="flex flex-col gap-0.5">
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-black text-foreground">
-                                  {format(new Date(dateString.split("|")[0]), "dd MMMM yyyy")}
+                                  {safeFormat(dateString.split("|")[0], "dd MMMM yyyy")}
                                 </span>
                                 {dateString.includes("|") && (
                                   <Badge variant="secondary" className="h-4 text-[8px] px-1.5 font-black bg-muted/80 text-primary border-none">
@@ -434,7 +443,7 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                                 )}
                               </div>
                               <span className="text-[10px] font-bold text-muted-foreground">
-                                {format(new Date(dateString.split("|")[0]), "hh:mm a")}
+                                {safeFormat(dateString.split("|")[0], "hh:mm a", "--:--")}
                               </span>
                             </div>
                           </div>
