@@ -63,45 +63,45 @@ const statusConfig: Record<
 > = {
   pending: {
     label: "Pending",
-    color: "text-chart-1",
-    hoverColor: "hover:text-chart-1",
-    bgColor: "bg-chart-1/10",
-    borderColor: "border-chart-1/10",
-    activeBorder: "ring-2 ring-chart-1/20 border-chart-1",
-    activeBg: "bg-chart-1/50",
+    color: "text-white",
+    hoverColor: "hover:text-white",
+    bgColor: "bg-chart-3/10",
+    borderColor: "border-chart-3/10",
+    activeBorder: "ring-2 ring-chart-3/20 border-chart-3",
+    activeBg: "bg-white",
     icon: CircleDashed,
   },
 
   rejected: {
     label: "Rejected",
-    color: "text-chart-2",
-    hoverColor: "hover:text-chart-2",
-    bgColor: "bg-chart-2/10",
-    borderColor: "border-chart-2/10",
-    activeBorder: "ring-2 ring-chart-2/20 border-chart-2",
-    activeBg: "bg-chart-2/50",
+    color: "text-white",
+    hoverColor: "hover:text-white",
+    bgColor: "bg-chart-3/10",
+    borderColor: "border-chart-3/10",
+    activeBorder: "ring-2 ring-chart-3/20 border-chart-3",
+    activeBg: "bg-white",
     icon: XCircle,
   },
 
   interested: {
     label: "Interested",
-    color: "text-chart-3",
-    hoverColor: "hover:text-chart-3",
+    color: "text-white",
+    hoverColor: "hover:text-white",
     bgColor: "bg-chart-3/10",
     borderColor: "border-chart-3/10",
     activeBorder: "ring-2 ring-chart-3/20 border-chart-3",
-    activeBg: "bg-chart-3/50",
+    activeBg: "bg-white",
     icon: CheckCircle,
   },
 
   inprocess: {
     label: "In Process",
-    color: "text-chart-4",
-    hoverColor: "hover:text-chart-4",
-    bgColor: "bg-chart-4/10",
-    borderColor: "border-chart-4/10",
-    activeBorder: "ring-2 ring-chart-4/20 border-chart-4",
-    activeBg: "bg-chart-4/50",
+    color: "text-white",
+    hoverColor: "hover:text-white",
+    bgColor: "bg-chart-3/10",
+    borderColor: "border-chart-3/10",
+    activeBorder: "ring-2 ring-chart-3/20 border-chart-3",
+    activeBg: "bg-white",
     icon: RefreshCw,
   },
 };
@@ -273,9 +273,9 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
         >
           <CardContent className="p-[var(--dash-card-padding)] pt-0 flex-1 flex flex-col gap-[var(--dash-gap)]">
             <div className="flex flex-col rounded-xl border-[var(--dash-border)] divide-y divide-[var(--dash-border)] bg-muted/30 overflow-hidden shadow-sm">
-              <div className="flex items-center justify-between p-2.5 hover:bg-background transition-colors">
+              <div className="flex items-center justify-between p-2.5 hover:bg-muted/20 transition-colors">
                 <div className="flex items-center gap-2 min-w-0 pr-2">
-                  <div className="p-1.5 bg-background rounded-full border border-border shrink-0 text-muted-foreground shadow-sm">
+                  <div className="p-1.5 bg-muted rounded-full border border-border shrink-0 text-muted-foreground shadow-sm">
                     <Phone className="w-3 h-3" />
                   </div>
                   <span className="text-[12px] font-black text-foreground truncate">{applicant.phone}</span>
@@ -290,9 +290,9 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                 </Button>
               </div>
 
-              <div className="flex items-center justify-between p-2.5 hover:bg-background transition-colors">
+              <div className="flex items-center justify-between p-2.5 hover:bg-muted/20 transition-colors">
                 <div className="flex items-center gap-2 min-w-0 pr-2">
-                  <div className="p-1.5 bg-background rounded-full border border-border shrink-0 text-muted-foreground shadow-sm">
+                  <div className="p-1.5 bg-muted rounded-full border border-border shrink-0 text-muted-foreground shadow-sm">
                     <Mail className="w-3 h-3" />
                   </div>
                   <span className="text-[12px] font-black text-foreground truncate">{applicant.email}</span>
@@ -300,23 +300,23 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                 <Button 
                   size="sm" 
                   variant="outline"
-                  className="h-8 cursor-pointer px-5 text-[11px] font-black border-border bg-background text-foreground hover:bg-muted shrink-0 rounded-full shadow-sm"
+                  className="h-8 cursor-pointer px-5 text-[11px] font-black border-border bg-muted text-primary hover:bg-muted shrink-0 rounded-full shadow-sm"
                   onClick={(e) => { e.stopPropagation(); window.location.href = `mailto:${applicant.email}`; }}
                 >
                   Mail
                 </Button>
               </div>
 
-              <div className="flex items-center justify-between p-2.5 hover:bg-background transition-colors">
+              <div className="flex items-center justify-between p-2.5 hover:bg-muted/20 transition-colors">
                 <div className="flex items-center gap-2 min-w-0 pr-2">
-                  <div className="p-1.5 bg-background rounded-full border border-border shrink-0 text-muted-foreground shadow-sm">
+                  <div className="p-1.5 bg-muted rounded-full border border-border shrink-0 text-muted-foreground shadow-sm">
                     <Calendar className="w-3 h-3" />
                   </div>
                   <span className="text-[12px] font-bold text-muted-foreground truncate">
                     Applied {applicant.created_time ? format(new Date(applicant.created_time), "dd MMM yyyy") : "—"}
                   </span>
                 </div>
-                <div className="h-8 px-4 flex items-center justify-center text-[11px] font-black bg-background/80 text-muted-foreground shrink-0 rounded-full border border-border shadow-sm">
+                <div className="h-8 px-4 flex items-center justify-center text-[11px]  font-black bg-muted text-primary shrink-0 rounded-full border border-border shadow-sm">
                   {applicant.created_time ? format(new Date(applicant.created_time), "hh:mm a") : "--:--"}
                 </div>
               </div>
@@ -341,8 +341,8 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                     className={cn(
                       "h-8 cursor-pointer px-2 text-[10px] font-black rounded-full transition-all border border-transparent shadow-sm",
                       isSelected
-                        ? `${config.activeBg} ${config.color} ${config.activeBorder} shadow-inner ${config.hoverColor}`
-                        : `bg-muted/50 text-muted-foreground hover:bg-background hover:border-border ${config.hoverColor}`
+                        ? `bg-white! text-black shadow-inner hover:bg-white/90! hover:text-black! hover:border-border!`
+                        : `bg-muted/50 text-muted-foreground hover:bg-muted/50! hover:border-border!`
                     )}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -453,7 +453,7 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                 className={cn(
                   "h-10 px-4 font-black text-[11px] uppercase tracking-widest transition-all active:scale-95 shadow-lg rounded-full",
                   hasChanges && !isSaving 
-                    ? "bg-primary text-white shadow-primary/30 hover:shadow-primary/40 hover:translate-y-[-1px]" 
+                    ? "bg-primary text-black shadow-primary/30 hover:shadow-primary/40 hover:translate-y-[-1px]" 
                     : "bg-muted text-muted-foreground shadow-none border border-border"
                 )}
               >

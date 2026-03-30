@@ -15,11 +15,11 @@ interface DepartmentTabsProps {
 }
 
 const STATUS_TABS: { value: ApplicantStatus | "all"; label: string; dotColor: string; activeText: string; activeBorderColor: string }[] = [
-  { value: "all", label: "All", dotColor: "bg-muted-foreground/40", activeText: "text-muted-foreground", activeBorderColor: "border-muted-foreground/60 border-2" },
+  { value: "all", label: "All", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
   { value: "pending", label: "Pending", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
-  { value: "rejected", label: "Rejected", dotColor: "bg-chart-2", activeText: "text-chart-2", activeBorderColor: "border-chart-2 border-2" },
-  { value: "interested", label: "Interested", dotColor: "bg-chart-3", activeText: "text-chart-3", activeBorderColor: "border-chart-3 border-2" },
-  { value: "inprocess", label: "In Process", dotColor: "bg-chart-4", activeText: "text-chart-4", activeBorderColor: "border-chart-4 border-2" },
+  { value: "rejected", label: "Rejected", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "interested", label: "Interested", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "inprocess", label: "In Process", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
 ];
 
 const DEPARTMENTS: { value: Department; label: string }[] = [
@@ -55,17 +55,17 @@ export default function DepartmentTabs({
               {isActive && (
                 <motion.div
                   layoutId="dept-pill-bg"
-                  className="absolute inset-0 rounded-xl bg-white shadow-sm ring-1 ring-black/5"
+                  className="absolute inset-0 rounded-2xl bg-white text-black shadow-sm ring-1 ring-black/5"
                   transition={{ type: "spring", duration: 0.5, bounce: 0.1 }}
                 />
               )}
-              <span className={cn("relative z-10 text-sm font-black", isActive ? "text-primary" : "text-muted-foreground")}>
+              <span className={cn("relative z-10 text-sm font-black", isActive ? "text-black" : "text-muted-foreground")}>
                 {dept.label}
               </span>
               {mounted && departmentCounts && (
                 <span className={cn(
                   "relative z-10 flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-black transition-colors",
-                  isActive ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20 text-muted-foreground"
+                  isActive ? "bg-muted text-white" : "bg-muted-foreground/20 text-muted-foreground"
                 )}>
                   {departmentCounts[dept.value]}
                 </span>

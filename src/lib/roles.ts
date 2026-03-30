@@ -1,20 +1,15 @@
 import type { Department } from "@/types";
 
 export const SALES_ROLES = [
-  "Sales Manager",
-  "Institutional Sales Manager",
-  "Network Manager",
-  "Sales Executive",
-  "Delivery Executive",
+  "Sales Managers",
+  "Sales Consultants",
+  "Customer Relationship Executives",
 ] as const;
 
 export const SERVICE_ROLES = [
-  "Service Manager",
-  "Service Advisor",
-  "Spare Parts Supervisor",
-  "Technician",
-  "Cashier",
-  "Billing Executive",
+  "Sr Technicians",
+  "Service Advisors",
+  "Spare Parts Supervisors",
 ] as const;
 
 export type SalesRole = (typeof SALES_ROLES)[number];
@@ -23,26 +18,14 @@ export type Role = SalesRole | ServiceRole;
 
 export const ALL_ROLES: Role[] = [...SALES_ROLES, ...SERVICE_ROLES];
 
-export const ROLE_SHORT_NAMES: Record<string, string> = {
-  "Sales Manager": "SM",
-  "Institutional Sales Manager": "ISM",
-  "Network Manager": "NM",
-  "Sales Executive": "SE",
-  "Sales Executives": "SE",
-  "Delivery Executive": "DE",
-  "Delivery Executives": "DE",
+export const ROLE_SHORT_NAMES: Record<Role, string> = {
+  "Sales Managers": "SM",
+  "Sales Consultants": "SC",
+  "Customer Relationship Executives": "CRE",
 
-  "Service Manager": "SVM",
-  "Service Advisor": "SA",
+  "Sr Technicians": "ST",
   "Service Advisors": "SA",
-  "Spare Parts Supervisor": "SPS",
   "Spare Parts Supervisors": "SPS",
-  "Technician": "TECH",
-  "Technicians": "TECH",
-  "Cashier": "CASH",
-  "Cashiers": "CASH",
-  "Billing Executive": "BE",
-  "Billing Executives": "BE",
 };
 
 export const ROLES_BY_DEPARTMENT: Record<Department, readonly Role[]> = {

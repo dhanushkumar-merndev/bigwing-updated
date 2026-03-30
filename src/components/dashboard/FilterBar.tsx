@@ -159,7 +159,7 @@ export default function FilterBar({
             </svg>
             Filters
             {activeFiltersCount > 0 && (
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-white animate-in zoom-in-50">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-muted-foreground/20 text-[10px] text-white animate-in zoom-in-50">
                 {activeFiltersCount}
               </span>
             )}
