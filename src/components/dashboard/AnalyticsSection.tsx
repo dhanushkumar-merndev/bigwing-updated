@@ -40,7 +40,7 @@ import { format, isWithinInterval, startOfDay, endOfDay, parseISO, eachDayOfInte
 import type { DateRange } from "react-day-picker";
 import type { AnalyticsEntry } from "@/app/api/analytics/route";
 import type { Applicant } from "@/types";
-import { ChartNoAxesCombined, BarChart3, FileSpreadsheet, Filter, Download } from "lucide-react";
+import { ChartNoAxesCombined, BarChart3, Filter, Download } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface PreparedEntry extends AnalyticsEntry {
@@ -432,7 +432,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
     });
 
     return Array.from(map.entries()).map(([role, counts]) => ({
-      role, ...counts, shortRole: ROLE_SHORT_NAMES[role.trim()] || role, fullName: role
+      role, ...counts, shortRole: (ROLE_SHORT_NAMES as Record<string, string>)[role.trim()] || role, fullName: role
     }));
   }, [deferredEntries, roleDateRange]);
 
