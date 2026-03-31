@@ -239,14 +239,11 @@ export default function DashboardPage() {
 
   const departmentTabsProps = {
     activeDepartment,
-    activeStatus,
     departmentCounts,
-    statusCounts: statusCountsForActiveDept,
     onDepartmentChange: (d: Department) => handleFilterChange(() => {
       setActiveDepartment(d);
       setSelectedRole("all");
     }),
-    onStatusChange: (s: ApplicantStatus | "all") => handleFilterChange(() => setActiveStatus(s)),
   };
 
 
@@ -352,6 +349,7 @@ export default function DashboardPage() {
           onSortOrderChange={(o) => handleFilterChange(() => setSortOrder(o))}
           activeStatus={activeStatus}
           onStatusChange={(s) => handleFilterChange(() => setActiveStatus(s))}
+          statusCounts={statusCountsForActiveDept}
         />
       </div>
 

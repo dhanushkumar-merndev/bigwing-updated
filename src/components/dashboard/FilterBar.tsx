@@ -16,9 +16,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Department, Role, SortField, SortOrder, ApplicantStatus } from "@/types";
 import { ROLES_BY_DEPARTMENT } from "@/lib/roles";
+
+const STATUS_TABS: { value: ApplicantStatus | "all"; label: string; dotColor: string; activeText: string; activeBorderColor: string }[] = [
+  { value: "all", label: "All", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "pending", label: "Pending", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "rejected", label: "Rejected", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "interested", label: "Interested", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "inprocess", label: "In Process", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+];
 
 interface FilterBarProps {
   department: Department;
@@ -32,6 +41,7 @@ interface FilterBarProps {
   onSortOrderChange: (order: SortOrder) => void;
   activeStatus: ApplicantStatus | "all";
   onStatusChange: (status: ApplicantStatus | "all") => void;
+  statusCounts?: { all: number; pending: number; interested: number; inprocess: number; rejected: number };
 }
 
 const SORT_FIELDS: { value: SortField; label: string }[] = [
@@ -61,6 +71,7 @@ export default function FilterBar({
   onSortOrderChange,
   activeStatus,
   onStatusChange,
+  statusCounts,
 }: FilterBarProps) {
   const mounted = useMounted();
 
@@ -71,57 +82,97 @@ export default function FilterBar({
     (sortField !== "created_time" || sortOrder !== "desc" ? 1 : 0);
 
   return (
-    <div className="flex flex-col gap-[var(--dash-gap)] mb-1 sm:flex-row sm:items-center">
-      {/* Search Input */}
-
-<div className="relative w-full  sm:w-80">
-  
-  {/* 🔍 Search Icon */}
-  <svg
-    className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-    />
-  </svg>
-
-  {/* ❌ Clear Button */}
-  {searchQuery && (
-    <button
-      type="button"
-      onClick={() => onSearchChange("")}
-      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground active:scale-95 transition-all"
-    >
-      <svg
-        className="h-3.5 w-3.5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+    <div className="flex flex-col gap-[var(--dash-gap)] mb-1 lg:flex-row lg:items-center">
+      {/* 🟢 Status Chips (Part of Row now) */}
+      <div 
+        className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto pb-1 no-scrollbar scroll-smooth flex-nowrap touch-pan-x"
+        data-lenis-prevent
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2.5}
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
-  )}
+        <div className="flex flex-nowrap items-center gap-2 min-w-0">
+          {STATUS_TABS.map((tab) => {
+            const isActive = activeStatus === tab.value;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => onStatusChange(tab.value)}
+                className={cn(
+                  "relative flex flex-shrink-0 items-center gap-2 rounded-[var(--dash-card-radius)] px-4 py-2 h-10 border transition-all duration-[var(--dash-transition-fast)]",
+                  isActive
+                    ? "border-transparent z-10 "
+                    : "bg-background border-border text-muted-foreground hover:border-border/80"
+                )}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="status-pill-bg"
+                    className={`absolute inset-0 rounded-[var(--dash-card-radius)] ${tab.activeBorderColor} shadow-sm`}
+                    transition={{ type: "spring", duration: 0.5, bounce: 0.15 }}
+                  />
+                )}
+                <span className={cn("relative z-10 h-1.5 w-1.5 rounded-full", tab.dotColor)} />
+                <span className={cn("relative z-10 text-xs font-black transition-colors duration-300", isActive ? tab.activeText : "text-muted-foreground")}>
+                  {tab.label}
+                </span>
+                {mounted && statusCounts && (
+                  <span className={cn(
+                    "relative z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1.5 text-[9px] font-black transition-colors duration-300",
+                    isActive ? `bg-muted shadow-xs ${tab.activeText}` : "bg-muted text-muted-foreground "
+                  )}>
+                    {statusCounts[tab.value]}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-  {/* Input */}
-  <Input
-    placeholder="Quick search..."
-    value={searchQuery}
-    onChange={(e) => onSearchChange(e.target.value)}
-    className="h-10  w-full pl-9 pr-9 text-sm rounded-[var(--dash-card-radius)] border-[var(--dash-border)] bg-background focus:ring-0 focus:border-border/80 shadow-premium/50"
-  />
-</div>
+      <div className="flex items-center gap-2 shrink-0">
+        {/* Search Input */}
+        <div className="relative w-full sm:w-64 lg:w-80">
+          <svg
+            className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => onSearchChange("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground active:scale-95 transition-all outline-none"
+            >
+              <svg
+                className="h-3 w-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+
+          <Input
+            placeholder="Quick search..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="h-10 w-full pl-9 pr-9 text-xs font-semibold rounded-[var(--dash-card-radius)] border-[var(--dash-border)] bg-background focus:ring-0 focus:border-border/80 shadow-inner/50"
+          />
+        </div>
       {/* Filter Popover */}
       {!mounted ? (
         <button
@@ -257,6 +308,7 @@ export default function FilterBar({
           </PopoverContent>
         </Popover>
       )}
+      </div>
     </div>
   );
 }
