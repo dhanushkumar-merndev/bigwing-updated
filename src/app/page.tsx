@@ -292,7 +292,7 @@ export default function DashboardPage() {
   }, [userName, quoteIndex, quotes]);
 
   const DashboardContent = (
-    <div className="space-y-3">
+    <div className="space-y-3 mt-2">
       <StatsRow stats={stats} />
       <AnalyticsSection applicants={applicants} on404={handle404} />
       {mounted && !isDesktop && (
@@ -302,7 +302,7 @@ export default function DashboardPage() {
             setTimeout(() => resizeLenis(), 50);
             setTimeout(() => scrollToPosition(0), 100);
           }}
-          className="w-full h-10 bg-primary text-primary-foreground rounded-2xl font-bold shadow-xl active:scale-95 transition-all text-sm flex items-center justify-center gap-2 group mb-6"
+          className="w-full h-12 bg-primary text-primary-foreground rounded-2xl font-bold shadow-xl active:scale-95 transition-all text-sm flex items-center justify-center gap-2 group mb-6"
         >
           View Applicant Database
           <svg className="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -316,7 +316,7 @@ export default function DashboardPage() {
   const ApplicantsListContent = (
     <div ref={applicantListRef} className="space-y-4 md:space-y-6">
       {mounted && !isDesktop && (
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-3 mt-2 mb-2">
           <Button
             variant="ghost"
             size="sm"
