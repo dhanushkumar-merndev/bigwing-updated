@@ -316,8 +316,13 @@ interface AnalyticsSectionProps {
   on404?: () => void;
 }
 
+// 🚀 Client-side Persistent Cache to prevent lag on mobile navigation
+let cachedAnalyticsEntries: PreparedEntry[] | null = null;
+let lastAnalyticsFetchTime = 0;
+const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+
 const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: AnalyticsSectionProps) {
-  const [entries, setEntries]               = useState<PreparedEntry[]>([]);
+  const [entries, setEntries]               = useState<PreparedEntry[]>(cachedAnalyticsEntries || []);
   const deferredEntries                     = useDeferredValue(entries);
   
   const [earliestDate, setEarliestDate]     = useState<Date | undefined>(undefined);
@@ -341,6 +346,12 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
   }, []);
 
   const fetchAnalytics = useCallback(() => {
+    // Return early if we have fresh cached data
+    if (cachedAnalyticsEntries && (Date.now() - lastAnalyticsFetchTime < CACHE_TTL)) {
+      if (entries.length === 0) setEntries(cachedAnalyticsEntries);
+      return;
+    }
+
     startTransition(async () => {
       try {
         const res  = await fetch("/api/analytics");
@@ -358,6 +369,9 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
             _created: toLocalDate(e.createdDate),
             _completed: e.completedDate ? toLocalDate(e.completedDate) : null
           }));
+          
+          cachedAnalyticsEntries = prepared;
+          lastAnalyticsFetchTime = Date.now();
           setEntries(prepared);
 
           const earliest = prepared.reduce<Date>((min, e) => {
@@ -375,7 +389,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
         }
       } catch (err) { console.error("Analytics fetch error:", err); }
     });
-  }, [on404, toLocalDate]);
+  }, [on404, toLocalDate, entries.length]);
 
   useEffect(() => { fetchAnalytics(); }, [fetchAnalytics]);
 

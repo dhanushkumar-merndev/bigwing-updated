@@ -68,12 +68,12 @@ export default function DashboardPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
   
-  const [itemsPerPage, setItemsPerPage] = useState(18);
+  const [itemsPerPage, setItemsPerPage] = useState(isDesktop ? 18 : 15);
   const [prevIsDesktop, setPrevIsDesktop] = useState(isDesktop);
 
   if (isDesktop !== prevIsDesktop && isDesktop !== undefined) {
     setPrevIsDesktop(isDesktop);
-    setItemsPerPage(isDesktop ? 18 : 10);
+    setItemsPerPage(isDesktop ? 18 : 15);
   }
 
   const deferredSearchQuery = useDeferredValue(searchQuery);
@@ -213,13 +213,7 @@ export default function DashboardPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    if (applicantListRef.current) {
-      const offset = isDesktop ? 100 : 20; // Extra padding for fixed header on desktop
-      const targetY = applicantListRef.current.offsetTop - offset;
-      scrollToPosition(Math.max(0, targetY));
-    } else {
-      scrollToPosition(0);
-    }
+    scrollToPosition(0);
   };
 
   const handleItemsPerPageChange = (value: string | null) => {
@@ -439,7 +433,7 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                      Showing {paginatedApplicants.length} of {filteredApplicants.length}
+                      {filteredApplicants.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} - {Math.min(currentPage * itemsPerPage, filteredApplicants.length)} of {filteredApplicants.length}
                     </div>
                   )}
 
@@ -508,7 +502,7 @@ export default function DashboardPage() {
                   )}
 
                   <div className="hidden md:block text-[10px] font-bold text-muted-foreground uppercase tracking-widest min-w-[120px] text-right">
-                    {itemsPerPage === -1 ? filteredApplicants.length : Math.min((currentPage * itemsPerPage), filteredApplicants.length)} / {filteredApplicants.length} applicants
+                    {itemsPerPage === -1 ? `1 - ${filteredApplicants.length}` : `${(currentPage - 1) * itemsPerPage + 1} - ${Math.min(currentPage * itemsPerPage, filteredApplicants.length)}`} of {filteredApplicants.length} applicants
                   </div>
                 </div>
               )}
@@ -539,29 +533,36 @@ export default function DashboardPage() {
               {ApplicantsListContent}
             </>
           ) : (
-            <AnimatePresence mode="wait">
+            <div className="grid grid-cols-1 overflow-hidden">
               <motion.div
-                key={activeMobileView}
-                initial={{ 
-                  opacity: 0, 
-                  scale: 0.99
-                }}
+                key="dashboard-view"
+                initial={false}
                 animate={{ 
-                  opacity: 1, 
-                  scale: 1
+                  opacity: activeMobileView === "dashboard" ? 1 : 0, 
+                  y: activeMobileView === "dashboard" ? 0 : 20,
+                  scale: activeMobileView === "dashboard" ? 1 : 0.99,
+                  pointerEvents: activeMobileView === "dashboard" ? "auto" : "none"
                 }}
-                exit={{ 
-                  opacity: 0, 
-                  scale: 0.99
-                }}
-                transition={{ 
-                  duration: 0.3,
-                  ease: "easeInOut"
-                }}
+                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                style={{ gridArea: "1 / 1 / 2 / 2" }}
               >
-                {activeMobileView === "dashboard" ? DashboardContent : ApplicantsListContent}
+                {DashboardContent}
               </motion.div>
-            </AnimatePresence>
+              <motion.div
+                key="applicants-view"
+                initial={false}
+                animate={{ 
+                  opacity: activeMobileView === "applicants" ? 1 : 0, 
+                  y: activeMobileView === "applicants" ? 0 : -20,
+                  scale: activeMobileView === "applicants" ? 1 : 0.99,
+                  pointerEvents: activeMobileView === "applicants" ? "auto" : "none"
+                }}
+                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                style={{ gridArea: "1 / 1 / 2 / 2" }}
+              >
+                {ApplicantsListContent}
+              </motion.div>
+            </div>
           )
         ) : (
           <div className="space-y-8 animate-pulse">
