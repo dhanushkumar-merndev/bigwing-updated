@@ -170,12 +170,12 @@ export default function FilterBar({
                 <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Sort Mechanism</p>
                 <div className="flex items-center gap-2">
                   <Select value={sortField} onValueChange={(v) => v && onSortFieldChange(v as SortField)}>
-                    <SelectTrigger className="h-9 flex-1 text-xs rounded-lg border-border">
+                    <SelectTrigger className="h-8 flex-1 text-[10px] uppercase font-black text-white rounded-lg border-border/40 bg-background/50">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl border-primary/10">
                       {SORT_FIELDS.map((f) => (
-                        <SelectItem key={f.value} value={f.value} className="text-xs">
+                        <SelectItem key={f.value} value={f.value} className="text-[10px] uppercase font-black text-white">
                           {f.label}
                         </SelectItem>
                       ))}
@@ -205,12 +205,12 @@ export default function FilterBar({
               <div className="space-y-2">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Filter By Status</p>
                 <Select value={activeStatus} onValueChange={(v) => v && onStatusChange(v as ApplicantStatus | "all")}>
-                  <SelectTrigger className="h-9 w-full text-xs rounded-lg border-border">
+                  <SelectTrigger className="h-8 w-full text-[10px] uppercase font-black text-white rounded-lg border-border/40 bg-background/50">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border-primary/10">
                     {STATUS_FILTERS.map((s) => (
-                      <SelectItem key={s.value} value={s.value} className="text-xs">
+                      <SelectItem key={s.value} value={s.value} className="text-[10px] uppercase font-black text-white">
                         {s.label}
                       </SelectItem>
                     ))}
@@ -223,13 +223,13 @@ export default function FilterBar({
               <div className="space-y-2">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Filter by Role</p>
                 <Select value={selectedRole} onValueChange={(v) => v && onRoleChange(v as Role | "all")}>
-                  <SelectTrigger className="h-9 w-full text-xs rounded-lg border-border">
+                  <SelectTrigger className="h-8 w-full text-[10px] uppercase font-black text-white rounded-lg border-border/40 bg-background/50">
                     <SelectValue placeholder="Filter role" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
+                  <SelectContent className="rounded-xl border-primary/10">
+                    <SelectItem value="all" className="text-[10px] uppercase font-black text-white">All Roles</SelectItem>
                     {departmentRoles.map((role) => (
-                      <SelectItem key={role} value={role} className="text-xs">
+                      <SelectItem key={role} value={role} className="text-[10px] uppercase font-black text-white">
                         {role}
                       </SelectItem>
                     ))}

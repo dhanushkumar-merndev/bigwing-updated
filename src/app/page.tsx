@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useDeferredValue } from "react";
+import { useState, useEffect, useMemo, useCallback, useDeferredValue, useRef } from "react";
 import { AnimatePresence, LayoutGroup, motion, type Variants } from "framer-motion";
 import Header from "@/components/dashboard/Header";
 import StatsRow from "@/components/dashboard/StatsRow";
@@ -12,6 +12,7 @@ import { useApplicants } from "@/hooks/useApplicants";
 import { useMounted } from "@/hooks/useMounted";
 import UserRegistrationDialog from "@/components/dashboard/UserRegistrationDialog";
 import SessionErrorDialog from "@/components/dashboard/SessionErrorDialog";
+import { cn } from "@/lib/utils";
 
 import { getDepartment } from "@/lib/roles";
 import type { Department, ApplicantStatus, SortField, SortOrder, Role, Applicant } from "@/types";
@@ -21,16 +22,35 @@ import { resizeLenis, scrollToPosition } from "@/lib/lenis";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getFromDB } from "@/lib/db";
 import { decryptName } from "@/lib/crypto";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
-const ITEMS_PER_PAGE = 9;
-
-
+// Removed ITEMS_PER_PAGE in favor of dynamic itemsPerPage state
 const fadeUp = (delay = 0): Variants => ({
   hidden: { opacity: 0, y: 15 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const, delay },
+    transition: { 
+      duration: 0.3, 
+      ease: "easeOut", 
+      delay 
+    },
   },
 });
 
@@ -38,6 +58,7 @@ export default function DashboardPage() {
   const { applicants, isPending, updatingId, fetchApplicants, saveApplicant, consecutive404Count, handle404 } = useApplicants();
   const mounted = useMounted();
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const applicantListRef = useRef<HTMLDivElement>(null);
 
   const [activeDepartment, setActiveDepartment] = useState<Department>("sales");
   const [activeStatus, setActiveStatus] = useState<ApplicantStatus | "all">("pending");
@@ -45,7 +66,15 @@ export default function DashboardPage() {
   const [selectedRole, setSelectedRole] = useState<Role | "all">("all");
   const [sortField, setSortField] = useState<SortField>("created_time");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
-  const [displayLimit, setDisplayLimit] = useState(ITEMS_PER_PAGE);
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const [itemsPerPage, setItemsPerPage] = useState(18);
+  const [prevIsDesktop, setPrevIsDesktop] = useState(isDesktop);
+
+  if (isDesktop !== prevIsDesktop && isDesktop !== undefined) {
+    setPrevIsDesktop(isDesktop);
+    setItemsPerPage(isDesktop ? 18 : 10);
+  }
 
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const deferredSelectedRole = useDeferredValue(selectedRole);
@@ -92,11 +121,11 @@ export default function DashboardPage() {
   useEffect(() => {
     const timer = setTimeout(() => resizeLenis(), 100);
     return () => clearTimeout(timer);
-  }, [applicants, displayLimit, activeDepartment, activeStatus]);
+  }, [applicants, itemsPerPage, currentPage, activeDepartment, activeStatus]);
 
   const handleFilterChange = useCallback((updater: () => void) => {
     updater();
-    setDisplayLimit(ITEMS_PER_PAGE);
+    setCurrentPage(1);
   }, []);
 
   const stats = useMemo(() => {
@@ -173,6 +202,40 @@ export default function DashboardPage() {
         return 0;
       });
   }, [applicants, activeDepartment, activeStatus, deferredSearchQuery, deferredSelectedRole, sortField, sortOrder]);
+
+  const totalPages = itemsPerPage === -1 ? 1 : Math.ceil(filteredApplicants.length / itemsPerPage);
+  
+  const paginatedApplicants = useMemo(() => {
+    if (itemsPerPage === -1) return filteredApplicants;
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredApplicants.slice(start, start + itemsPerPage);
+  }, [filteredApplicants, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (applicantListRef.current) {
+      const offset = isDesktop ? 100 : 20; // Extra padding for fixed header on desktop
+      const targetY = applicantListRef.current.offsetTop - offset;
+      scrollToPosition(Math.max(0, targetY));
+    } else {
+      scrollToPosition(0);
+    }
+  };
+
+  const handleItemsPerPageChange = (value: string | null) => {
+    if (!value) return;
+    const numValue = parseInt(value);
+    
+    if (numValue >= 72) {
+      toast.warning("Performance Warning", {
+        description: `Displaying ${numValue} rows per page may cause slight layout lag on some devices.`,
+        duration: 4000,
+      });
+    }
+    
+    setItemsPerPage(numValue);
+    setCurrentPage(1);
+  };
 
   const departmentTabsProps = {
     activeDepartment,
@@ -254,7 +317,7 @@ export default function DashboardPage() {
   );
 
   const ApplicantsListContent = (
-    <div className="space-y-4 md:space-y-6">
+    <div ref={applicantListRef} className="space-y-4 md:space-y-6">
       {mounted && !isDesktop && (
         <div className="flex items-center gap-3 mb-2">
           <Button
@@ -273,13 +336,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <motion.div 
-        key="filters" 
-        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 md:gap-3" 
-        variants={fadeUp(0.3)} 
-        initial="hidden" 
-        animate="visible"
-      >
         <div className="w-full sm:w-auto min-w-0">
           <DepartmentTabs {...departmentTabsProps} />
         </div>
@@ -298,7 +354,6 @@ export default function DashboardPage() {
           onStatusChange={(s) => handleFilterChange(() => setActiveStatus(s))}
         />
       </div>
-      </motion.div>
 
       <div className="min-h-[600px] relative">
         <AnimatePresence mode="wait">
@@ -343,11 +398,11 @@ export default function DashboardPage() {
               </button>
             </motion.div>
           ) : (
-            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-8">
               <LayoutGroup>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 md:gap-4 p-1">
                   <AnimatePresence mode="popLayout" initial={false}>
-                    {filteredApplicants.slice(0, displayLimit).map((applicant, i) => (
+                    {paginatedApplicants.map((applicant, i) => (
                       <ApplicantCard 
                         key={applicant.id} 
                         applicant={applicant} 
@@ -361,22 +416,102 @@ export default function DashboardPage() {
                   </AnimatePresence>
                 </div>
               </LayoutGroup>
-              {filteredApplicants.length > displayLimit && (
-                <div className="flex items-center justify-center gap-3 pt-6 flex-col sm:flex-row">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setDisplayLimit(prev => prev + ITEMS_PER_PAGE)} 
-                    className="w-full sm:w-auto font-bold text-xs px-8 rounded-full h-10 transition-all bg-secondary! hover:text-secondary-foreground! cursor-pointer"
-                  >
-                    Load More ({filteredApplicants.length - displayLimit} left)
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => setDisplayLimit(filteredApplicants.length)} 
-                    className="w-full sm:w-auto font-bold text-xs px-8 rounded-full h-10 transition-all bg-primary! text-primary-foreground! cursor-pointer hover:bg-primary/80!"
-                  >
-                    View All Applicants
-                  </Button>
+
+              {filteredApplicants.length > 0 && (
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-4 pb-10 border-t border-border/40">
+                  {/* Items Per Page (Desktop) */}
+                  {isDesktop ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tight">Rows per page</span>
+                        <Select 
+                          value={itemsPerPage.toString()} 
+                          onValueChange={handleItemsPerPageChange}
+                        >
+                          <SelectTrigger className="h-7 w-[68px] rounded-lg border-border/40 bg-background/40 text-[9px] font-bold font-mono text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl border-primary/10">
+                            <SelectItem value="18" className="text-[10px] font-bold font-mono text-white">18</SelectItem>
+                            <SelectItem value="36" className="text-[10px] font-bold font-mono text-white">36</SelectItem>
+                            <SelectItem value="54" className="text-[10px] font-bold font-mono text-white">54</SelectItem>
+                            <SelectItem value="72" className="text-[10px] font-bold font-mono text-white">72</SelectItem>
+                            <SelectItem value="90" className="text-[10px] font-bold font-mono text-white">90</SelectItem>
+                          </SelectContent>
+                        </Select>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                      Showing {paginatedApplicants.length} of {filteredApplicants.length}
+                    </div>
+                  )}
+
+                  {/* Pagination Controls */}
+                  {totalPages > 1 && (
+                    <Pagination>
+                      <PaginationContent className="gap-1 flex-wrap justify-center">
+                        <PaginationItem>
+                          <PaginationPrevious 
+                            onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                            className={cn(
+                              "rounded-xl h-9 text-xs font-bold transition-all border-border/60",
+                              currentPage === 1 ? "opacity-30 pointer-events-none " : "hover:bg-primary hover:text-white cursor-pointer"
+                            )}
+                          />
+                        </PaginationItem>
+                        
+                        {/* Adaptive Pagination Logic */}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                          // Simple logic: show first, last, and current +/- 1
+                          if (
+                            page === 1 || 
+                            page === totalPages || 
+                            (page >= currentPage - 1 && page <= currentPage + 1)
+                          ) {
+                            return (
+                              <PaginationItem key={page}>
+                                <PaginationLink
+                                  isActive={currentPage === page}
+                                  onClick={() => handlePageChange(page)}
+                                  className={cn(
+                                    "rounded-xl h-9 w-9 text-xs font-bold transition-all border-border/60 cursor-pointer",
+                                    currentPage === page 
+                                      ? "bg-primary text-white border-primary" 
+                                      : "hover:bg-primary/10"
+                                  )}
+                                >
+                                  {page}
+                                </PaginationLink>
+                              </PaginationItem>
+                            );
+                          }
+                          
+                          if (page === currentPage - 2 || page === currentPage + 2) {
+                            return (
+                              <PaginationItem key={page}>
+                                <PaginationEllipsis className="h-9 w-4 opacity-50" />
+                              </PaginationItem>
+                            );
+                          }
+                          
+                          return null;
+                        })}
+
+                        <PaginationItem>
+                          <PaginationNext 
+                            onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                            className={cn(
+                              "rounded-xl h-9 text-xs font-bold transition-all border-border/60",
+                              currentPage === totalPages ? "opacity-30 pointer-events-none" : "hover:bg-primary hover:t   ext-white cursor-pointer"
+                            )}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  )}
+
+                  <div className="hidden md:block text-[10px] font-bold text-muted-foreground uppercase tracking-widest min-w-[120px] text-right">
+                    {itemsPerPage === -1 ? filteredApplicants.length : Math.min((currentPage * itemsPerPage), filteredApplicants.length)} / {filteredApplicants.length} applicants
+                  </div>
                 </div>
               )}
             </motion.div>
@@ -422,10 +557,8 @@ export default function DashboardPage() {
                   scale: 0.99
                 }}
                 transition={{ 
-                  type: "spring",
-                  damping: 30,
-                  stiffness: 250,
-                  mass: 0.5
+                  duration: 0.3,
+                  ease: "easeInOut"
                 }}
               >
                 {activeMobileView === "dashboard" ? DashboardContent : ApplicantsListContent}

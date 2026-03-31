@@ -594,19 +594,19 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
 
             {/* Status Filter */}
             <Select value={statusFilter} onValueChange={(v) => startTransition(() => setStatusFilter(v as keyof typeof chartConfig))}>
-              <SelectTrigger className="h-9 w-36 text-xs font-bold border-border/60 bg-background/50 rounded-xl hover:border-primary/40 transition-colors">
-                <div className="flex items-center gap-2 truncate">
-                  <Filter className="w-3 h-3 text-muted-foreground" />
-                  <SelectValue placeholder="STATUS: ALL" />
+              <SelectTrigger className="h-8 w-32 px-2.5 text-[9px] font-black uppercase tracking-wider text-white border-border/40 bg-background/50 rounded-lg hover:border-primary/40 transition-colors">
+                <div className="flex items-center gap-1.5 truncate">
+                  <Filter className="w-3 h-3 text-muted-foreground/60" />
+                  <SelectValue placeholder="STATUS" />
                 </div>
               </SelectTrigger>
-              <SelectContent className="rounded-2xl border-primary/10">
-                <SelectItem value="all" className="font-bold text-xs">ALL PERFORMANCE</SelectItem>
+              <SelectContent className="rounded-xl border-primary/10">
+                <SelectItem value="all" className="text-[10px] font-black uppercase tracking-wider text-white">ALL PERFORMANCE</SelectItem>
                 <div className="h-px bg-border/40 my-1 mx-1" />
-                <SelectItem value="pending" className="text-chart-1 font-bold text-xs">PENDING</SelectItem>
-                <SelectItem value="interested" className="text-chart-3 font-bold text-xs">INTERESTED</SelectItem>
-                <SelectItem value="inprocess" className="text-chart-4 font-bold text-xs">IN PROCESS</SelectItem>
-                <SelectItem value="rejected" className="text-chart-2 font-bold text-xs">REJECTED</SelectItem>
+                <SelectItem value="pending" className="text-[10px] font-black uppercase tracking-wider text-white">PENDING</SelectItem>
+                <SelectItem value="interested" className="text-[10px] font-black uppercase tracking-wider text-white">INTERESTED</SelectItem>
+                <SelectItem value="inprocess" className="text-[10px] font-black uppercase tracking-wider text-white">IN PROCESS</SelectItem>
+                <SelectItem value="rejected" className="text-[10px] font-black uppercase tracking-wider text-white">REJECTED</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -622,7 +622,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
       <Card className="rounded-[var(--dash-card-radius)] bg-card border-[var(--dash-border)] shadow-sm hover:shadow-md transition-all duration-[var(--dash-transition-slow)] min-h-[360px]">
         <CardHeader className="py-4 px-6 space-y-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex flex-col sm:flex-row items-start sm:items-center gap-2">
+            <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex flex-col lg:flex-row items-start lg:items-center gap-2">
               <div className="flex items-center gap-1.5">
                 <BarChart3 className="w-3 h-3" /> Role Breakdown
               </div>
