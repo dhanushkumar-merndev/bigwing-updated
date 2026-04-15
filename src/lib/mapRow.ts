@@ -12,6 +12,9 @@ export const mapRow = (row: (string | number)[], index: number): Applicant => {
     updatedArr = [];
   }
 
+  const rawStatus = String(row[5] ?? "").trim();
+  const status = (rawStatus === "" ? "pending" : rawStatus) as ApplicantStatus;
+
   return {
     id: String(index + 1),
     created_time: String(row[0] ?? ""),
@@ -19,7 +22,7 @@ export const mapRow = (row: (string | number)[], index: number): Applicant => {
     full_name: String(row[2] ?? ""),
     phone: String(row[3] ?? ""),
     email: String(row[4] ?? ""),
-    status: (String(row[5] ?? "pending") as ApplicantStatus),
+    status,
     feedback: String(row[6] ?? ""),
     updated: updatedArr,
   };
