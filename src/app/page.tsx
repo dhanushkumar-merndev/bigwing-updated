@@ -123,6 +123,16 @@ export default function DashboardPage() {
     return () => clearTimeout(timer);
   }, [applicants, itemsPerPage, currentPage, activeDepartment, activeStatus]);
 
+  const scrollToApplicantsSection = useCallback(() => {
+    if (typeof window === "undefined") return;
+
+    const listTop = applicantListRef.current?.getBoundingClientRect().top;
+    if (listTop === undefined) return;
+
+    const targetY = Math.max(0, window.scrollY + listTop - 24);
+    scrollToPosition(targetY);
+  }, []);
+
   const handleFilterChange = useCallback((updater: () => void) => {
     updater();
     setCurrentPage(1);
@@ -213,7 +223,10 @@ export default function DashboardPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    scrollToPosition(0);
+    window.setTimeout(() => {
+      resizeLenis();
+      scrollToApplicantsSection();
+    }, 120);
   };
 
   const handleItemsPerPageChange = (value: string | null) => {
