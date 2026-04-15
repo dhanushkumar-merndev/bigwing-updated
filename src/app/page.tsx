@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useDeferredValue, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useDeferredValue, useRef, type MouseEvent } from "react";
 import { AnimatePresence, LayoutGroup, motion, type Variants } from "framer-motion";
 import Header from "@/components/dashboard/Header";
 import StatsRow from "@/components/dashboard/StatsRow";
@@ -58,7 +58,7 @@ export default function DashboardPage() {
   const { applicants, isPending, updatingId, fetchApplicants, saveApplicant, consecutive404Count, handle404 } = useApplicants();
   const mounted = useMounted();
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const applicantListRef = useRef<HTMLDivElement>(null);
+  const resultsSectionRef = useRef<HTMLDivElement>(null);
 
   const [activeDepartment, setActiveDepartment] = useState<Department>("sales");
   const [activeStatus, setActiveStatus] = useState<ApplicantStatus | "all">("pending");
@@ -122,16 +122,6 @@ export default function DashboardPage() {
     const timer = setTimeout(() => resizeLenis(), 100);
     return () => clearTimeout(timer);
   }, [applicants, itemsPerPage, currentPage, activeDepartment, activeStatus]);
-
-  const scrollToApplicantsSection = useCallback(() => {
-    if (typeof window === "undefined") return;
-
-    const listTop = applicantListRef.current?.getBoundingClientRect().top;
-    if (listTop === undefined) return;
-
-    const targetY = Math.max(0, window.scrollY + listTop - 24);
-    scrollToPosition(targetY);
-  }, []);
 
   const handleFilterChange = useCallback((updater: () => void) => {
     updater();
@@ -222,11 +212,24 @@ export default function DashboardPage() {
   }, [filteredApplicants, currentPage, itemsPerPage]);
 
   const handlePageChange = (page: number) => {
+    if (typeof window === "undefined" || page === currentPage) return;
     setCurrentPage(page);
     window.setTimeout(() => {
       resizeLenis();
-      scrollToApplicantsSection();
+      const resultsTop = resultsSectionRef.current?.getBoundingClientRect().top;
+      if (resultsTop === undefined) return;
+
+      const targetY = Math.max(0, window.scrollY + resultsTop - 240);
+      scrollToPosition(targetY);
     }, 120);
+  };
+
+  const handlePaginationClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    page: number,
+  ) => {
+    event.preventDefault();
+    handlePageChange(page);
   };
 
   const handleItemsPerPageChange = (value: string | null) => {
@@ -321,7 +324,7 @@ export default function DashboardPage() {
   );
 
   const ApplicantsListContent = (
-    <div ref={applicantListRef} className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {mounted && !isDesktop && (
         <div className="flex items-center gap-3 mt-2 mb-2">
           <Button
@@ -360,7 +363,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="min-h-[600px] relative">
+      <div ref={resultsSectionRef} className="min-h-[600px] relative">
         <AnimatePresence mode="wait">
           {applicants.length === 0 && isPending ? (
             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 md:gap-4 p-1">
@@ -456,7 +459,7 @@ export default function DashboardPage() {
                       <PaginationContent className="gap-1 flex-wrap justify-center">
                         <PaginationItem>
                           <PaginationPrevious 
-                            onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                            onClick={(event) => currentPage > 1 && handlePaginationClick(event, currentPage - 1)}
                             className={cn(
                               "rounded-xl h-9 text-xs font-bold transition-all border-border/60",
                               currentPage === 1 ? "opacity-30 pointer-events-none " : "hover:bg-primary hover:text-white cursor-pointer"
@@ -476,7 +479,7 @@ export default function DashboardPage() {
                               <PaginationItem key={page}>
                                 <PaginationLink
                                   isActive={currentPage === page}
-                                  onClick={() => handlePageChange(page)}
+                                  onClick={(event) => handlePaginationClick(event, page)}
                                   className={cn(
                                     "rounded-xl h-9 w-9 text-xs font-bold transition-all border-border/60 cursor-pointer",
                                     currentPage === page 
@@ -503,7 +506,7 @@ export default function DashboardPage() {
 
                         <PaginationItem>
                           <PaginationNext 
-                            onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                            onClick={(event) => currentPage < totalPages && handlePaginationClick(event, currentPage + 1)}
                             className={cn(
                               "rounded-xl h-9 text-xs font-bold transition-all border-border/60",
                               currentPage === totalPages ? "opacity-30 pointer-events-none" : "hover:bg-primary hover:t   ext-white cursor-pointer"
