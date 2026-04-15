@@ -49,7 +49,7 @@ const totalCardConfig = {
 };
 
 const StatsRow = memo(function StatsRow({ stats }: StatsRowProps) {
-  const total = stats.pending + stats.rnr + stats.interested + stats.rejected + stats.inprocess;
+  const total = Object.values(stats).reduce((sum, value) => sum + value, 0);
 
   return (
     <motion.div

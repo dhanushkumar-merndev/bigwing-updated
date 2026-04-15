@@ -441,7 +441,9 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
   }, [deferredEntries, roleDateRange]);
 
   const totalRoleApplicants = useMemo(() => {
-    return roleData.reduce((sum, item) => sum + item.pending + item.rnr + item.interested + item.inprocess + item.rejected, 0);
+    return roleData.reduce((total, role) => {
+      return total + role.pending + role.rnr + role.interested + role.inprocess + role.rejected;
+    }, 0);
   }, [roleData]);
 
   const workflowData = useMemo(() => {
