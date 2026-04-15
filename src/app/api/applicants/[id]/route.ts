@@ -3,7 +3,7 @@ import { sheets, SHEET_ID, TAB_NAME } from "@/lib/sheets";
 import { rateLimit } from "@/lib/rateLimit";
 import type { ApplicantStatus, Role } from "@/types";
 
-const VALID_STATUSES: ApplicantStatus[] = ["pending", "rejected", "interested", "inprocess"];
+const VALID_STATUSES: ApplicantStatus[] = ["pending", "rnr", "interested", "inprocess", "rejected"];
 
 export const dynamic = "force-dynamic";
 

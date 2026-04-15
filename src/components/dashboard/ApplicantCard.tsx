@@ -83,6 +83,17 @@ const statusConfig: Record<
     icon: XCircle,
   },
 
+  rnr: {
+    label: "RNR",
+    color: "text-white",
+    hoverColor: "hover:text-white",
+    bgColor: "bg-chart-3/10",
+    borderColor: "border-chart-3/10",
+    activeBorder: "ring-2 ring-chart-3/20 border-chart-3",
+    activeBg: "bg-white",
+    icon: AlertCircle,
+  },
+
   interested: {
     label: "Interested",
     color: "text-white",
@@ -336,8 +347,8 @@ export const ApplicantCard = memo(function ApplicantCard({ applicant, onSave, is
                 Quick Decision
               </Label>
 
-              <div className="grid grid-cols-3 gap-1.5">
-                {(["rejected", "interested", "inprocess"] as const).map((s) => {
+              <div className="grid grid-cols-2 gap-1.5">
+                {(["rnr", "interested", "inprocess", "rejected"] as const).map((s) => {
                   const isSelected = formData.status === s;
                   const config = statusConfig[s as ApplicantStatus] || statusConfig.pending;
                   const StatusIcon = config.icon;

@@ -139,7 +139,7 @@ export default function DashboardPage() {
   }, []);
 
   const stats = useMemo(() => {
-    const s = { pending: 0, interested: 0, inprocess: 0, rejected: 0 };
+    const s = { pending: 0, rnr: 0, interested: 0, inprocess: 0, rejected: 0 };
     applicants.forEach((a) => {
       const status = a.status as keyof typeof s;
       if (status in s) s[status]++;
@@ -157,7 +157,7 @@ export default function DashboardPage() {
   }, [applicants]);
 
   const statusCountsForActiveDept = useMemo(() => {
-    const s = { all: 0, pending: 0, interested: 0, inprocess: 0, rejected: 0 };
+    const s = { all: 0, pending: 0, rnr: 0, interested: 0, inprocess: 0, rejected: 0 };
     applicants.forEach((a) => {
       if (getDepartment(a.position) === activeDepartment) {
         s.all++;

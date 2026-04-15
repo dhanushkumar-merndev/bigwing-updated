@@ -52,6 +52,7 @@ interface PreparedEntry extends AnalyticsEntry {
 
 const chartConfig = {
   pending:    { label: "Pending",    color: "var(--chart-1)" },
+  rnr:        { label: "RNR",        color: "var(--chart-5)" },
   interested: { label: "Interested", color: "var(--chart-3)" },
   inprocess:  { label: "In Process", color: "var(--chart-4)" },
   rejected:   { label: "Rejected",   color: "var(--chart-2)" },
@@ -60,11 +61,12 @@ const chartConfig = {
   newLeads:   { label: "Actually Pending (New)", color: "var(--chart-4)" },
 } as const;
 
-const STATUS_KEYS = ["pending", "interested", "inprocess", "rejected"] as const;
+const STATUS_KEYS = ["pending", "rnr", "interested", "inprocess", "rejected"] as const;
 
 interface AggregatedPoint {
   date: string;
   pending: number;
+  rnr: number;
   interested: number;
   inprocess: number;
   rejected: number;
@@ -388,7 +390,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
     const map  = new Map<string, AggregatedPoint>();
 
     eachDayOfInterval({ start: from, end: to }).forEach((day) => {
-      map.set(format(day, "dd MMM"), { date: format(day, "dd MMM"), pending: 0, interested: 0, inprocess: 0, rejected: 0 });
+      map.set(format(day, "dd MMM"), { date: format(day, "dd MMM"), pending: 0, rnr: 0, interested: 0, inprocess: 0, rejected: 0 });
     });
 
     (deferredEntries as unknown as PreparedEntry[]).forEach((e) => {
@@ -408,6 +410,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
     return result.map(p => ({
       ...p,
       pending:    statusFilter === "pending"    ? p.pending : 0,
+      rnr:        statusFilter === "rnr"        ? p.rnr : 0,
       interested: statusFilter === "interested" ? p.interested : 0,
       inprocess:  statusFilter === "inprocess"  ? p.inprocess : 0,
       rejected:   statusFilter === "rejected"   ? p.rejected : 0,
@@ -423,7 +426,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
     (deferredEntries as unknown as PreparedEntry[]).forEach((e) => {
       const d = e._created;
       if (d >= from && d <= to) {
-        if (!map.has(e.role)) map.set(e.role, { pending: 0, interested: 0, inprocess: 0, rejected: 0 });
+        if (!map.has(e.role)) map.set(e.role, { pending: 0, rnr: 0, interested: 0, inprocess: 0, rejected: 0 });
         const counts = map.get(e.role)!;
         if (isStatus(e.status)) {
           const statusKey = e.status as keyof Omit<AggregatedPoint, "date">;
@@ -438,7 +441,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
   }, [deferredEntries, roleDateRange]);
 
   const totalRoleApplicants = useMemo(() => {
-    return roleData.reduce((sum, item) => sum + item.pending + item.interested + item.inprocess + item.rejected, 0);
+    return roleData.reduce((sum, item) => sum + item.pending + item.rnr + item.interested + item.inprocess + item.rejected, 0);
   }, [roleData]);
 
   const workflowData = useMemo(() => {
@@ -605,6 +608,7 @@ const AnalyticsSection = memo(function AnalyticsSection({ applicants, on404 }: A
                 <SelectItem value="all" className="text-[10px] font-black uppercase tracking-wider text-white">ALL PERFORMANCE</SelectItem>
                 <div className="h-px bg-border/40 my-1 mx-1" />
                 <SelectItem value="pending" className="text-[10px] font-black uppercase tracking-wider text-white">PENDING</SelectItem>
+                <SelectItem value="rnr" className="text-[10px] font-black uppercase tracking-wider text-white">RNR</SelectItem>
                 <SelectItem value="interested" className="text-[10px] font-black uppercase tracking-wider text-white">INTERESTED</SelectItem>
                 <SelectItem value="inprocess" className="text-[10px] font-black uppercase tracking-wider text-white">IN PROCESS</SelectItem>
                 <SelectItem value="rejected" className="text-[10px] font-black uppercase tracking-wider text-white">REJECTED</SelectItem>

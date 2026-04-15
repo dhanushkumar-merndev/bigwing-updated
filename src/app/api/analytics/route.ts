@@ -16,7 +16,7 @@ export interface AnalyticsEntry {
 
 interface AnalyticsResult {
   entries: AnalyticsEntry[];
-  stats: { pending: number; interested: number; inprocess: number; rejected: number };
+  stats: { pending: number; rnr: number; interested: number; inprocess: number; rejected: number };
 }
 
 export async function GET(req: NextRequest) {
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     const rows = response.data.values ?? [];
     const applicants = rows.slice(1).map((row, index) => mapRow(row, index));
 
-    const stats = { pending: 0, interested: 0, inprocess: 0, rejected: 0 };
+    const stats = { pending: 0, rnr: 0, interested: 0, inprocess: 0, rejected: 0 };
     const entries: AnalyticsEntry[] = [];
 
     const toDateStr = (date: Date) => {
@@ -77,6 +77,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ entries: [], stats: { pending: 0, interested: 0, inprocess: 0, rejected: 0 }, error: message }, { status: 200 });
+    return NextResponse.json({ entries: [], stats: { pending: 0, rnr: 0, interested: 0, inprocess: 0, rejected: 0 }, error: message }, { status: 200 });
   }
 }

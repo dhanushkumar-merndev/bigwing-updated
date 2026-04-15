@@ -24,9 +24,10 @@ import { ROLES_BY_DEPARTMENT } from "@/lib/roles";
 const STATUS_TABS: { value: ApplicantStatus | "all"; label: string; dotColor: string; activeText: string; activeBorderColor: string }[] = [
   { value: "all", label: "All", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
   { value: "pending", label: "Pending", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
-  { value: "rejected", label: "Rejected", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "rnr", label: "RNR", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
   { value: "interested", label: "Interested", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
   { value: "inprocess", label: "In Process", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
+  { value: "rejected", label: "Rejected", dotColor: "bg-chart-1", activeText: "text-chart-1", activeBorderColor: "border-chart-1 border-2" },
 ];
 
 interface FilterBarProps {
@@ -41,7 +42,7 @@ interface FilterBarProps {
   onSortOrderChange: (order: SortOrder) => void;
   activeStatus: ApplicantStatus | "all";
   onStatusChange: (status: ApplicantStatus | "all") => void;
-  statusCounts?: { all: number; pending: number; interested: number; inprocess: number; rejected: number };
+  statusCounts?: { all: number; pending: number; rnr: number; interested: number; inprocess: number; rejected: number };
 }
 
 const SORT_FIELDS: { value: SortField; label: string }[] = [
@@ -54,6 +55,7 @@ const SORT_FIELDS: { value: SortField; label: string }[] = [
 const STATUS_FILTERS: { value: ApplicantStatus | "all"; label: string }[] = [
   { value: "all", label: "All Statuses" },
   { value: "pending", label: "Pending" },
+  { value: "rnr", label: "RNR" },
   { value: "interested", label: "Interested" },
   { value: "inprocess", label: "In Process" },
   { value: "rejected", label: "Rejected" },
